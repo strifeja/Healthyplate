@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\layout",
+    "\\src\\scss",
+    "\\src\\views",
+    "\\src\\views\\nutrition",
+    "\\src\\views\\starter"
+  ],
+  "SelectedNode": "\\src\\views\\starter\\starter.js",
+  "PreviewInSolutionExplorer": false
+}
