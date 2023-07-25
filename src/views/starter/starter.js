@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { CButton, CForm, CFormLabel, CFormTextarea } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import axios from 'axios'
 
 const Starter = () => {
   const [allergies, setAllergies] = useState('')
@@ -8,13 +9,45 @@ const Starter = () => {
   const [showMealPlan, setShowMealPlan] = useState(false)
   const [mealPlan, setMealPlan] = useState('')
 
-  const handleGenerateMealPlan = () => {
-    // Perform any necessary processing to generate the meal plan based on allergies and preferences
-    // For example, you can use the "allergies" and "preferences" state values to create the meal plan
-    // For now, we will just show a simple message
-    const generatedMealPlan = `Your meal plan based on allergies "${allergies}" and preferences "${preferences}" will be displayed here.`
-    setMealPlan(generatedMealPlan)
-    setShowMealPlan(true)
+  // const handleGenerateMealPlan = () => {
+  //   // Perform any necessary processing to generate the meal plan based on allergies and preferences
+  //   // For example, you can use the "allergies" and "preferences" state values to create the meal plan
+  //   // For now, we will just show a simple message
+  //   const generatedMealPlan = `Your meal plan based on allergies "${allergies}" and preferences "${preferences}" will be displayed here.`
+  //   setMealPlan(generatedMealPlan)
+  //   setShowMealPlan(true)
+  // }
+
+  const handleGenerateMealPlan = async () => {
+    const systemMessage = {
+      role: 'system',
+      content: `You are an AI that is tasked with generating a meal plan for a user taking into account their allergies and preferences. You will make a meal plan that consists of 7 days and has 3 meals for each day.`,
+    }
+    const userPrompt = {
+      role: 'user',
+      content: `The user has the following allergies: "${allergies}". Their meal preferences are: "${preferences}".`,
+    }
+    const messages = [systemMessage, userPrompt]
+    try {
+      const res = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model: 'gpt-3.5-turbo',
+          messages,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer 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`,
+          },
+        },
+      )
+      setMealPlan(res.data.choices[0].message.content)
+      setShowMealPlan(true)
+    } catch (error) {
+      setMealPlan(`Error: ${error.message}`)
+      setShowMealPlan(true)
+    }
   }
 
   const handleStartAgain = () => {
