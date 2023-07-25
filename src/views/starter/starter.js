@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CButton, CForm, CFormLabel, CFormTextarea } from '@coreui/react'
+import { CButton, CForm, CFormControl, CFormInput, CFormLabel, CFormTextarea } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
 
@@ -8,6 +8,7 @@ const Starter = () => {
   const [preferences, setPreferences] = useState('')
   const [showMealPlan, setShowMealPlan] = useState(false)
   const [mealPlan, setMealPlan] = useState('')
+  const [api, setApi] = useState('')
 
   // const handleGenerateMealPlan = () => {
   //   // Perform any necessary processing to generate the meal plan based on allergies and preferences
@@ -38,7 +39,7 @@ const Starter = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer `,
+            Authorization: `Bearer ` + api,
           },
         },
       )
@@ -74,6 +75,15 @@ const Starter = () => {
         <>
           <h2>Create a New Meal Plan</h2>
           <CForm>
+            <div className="mb-3">
+              <CFormLabel htmlFor="API">Enter API Code</CFormLabel>
+              <CFormInput
+                type="password"
+                id="API"
+                value={api}
+                onChange={(e) => setApi(e.target.value)}
+              />
+            </div>
             <div className="mb-3">
               <CFormLabel htmlFor="Allergies">Enter Allergies Here</CFormLabel>
               <CFormTextarea
