@@ -38,13 +38,14 @@ const Starter = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer `,
           },
         },
       )
       setMealPlan(res.data.choices[0].message.content)
       setShowMealPlan(true)
     } catch (error) {
+      console.log(error)
       setMealPlan(`Error: ${error.message}`)
       setShowMealPlan(true)
     }
