@@ -8,7 +8,7 @@ const Starter = () => {
   const [allergies, setAllergies] = useState('')
   const [preferences, setPreferences] = useState('')
   // State variables for max tokens and temperature
-  const [maxTokens, setMaxTokens] = useState(60)
+  const [maxTokens, setMaxTokens] = useState(150)
   const [temperature, setTemperature] = useState(0.5)
   // State variables for meal plan
   const [showMealPlan, setShowMealPlan] = useState(false)
@@ -71,12 +71,24 @@ const Starter = () => {
       {showMealPlan ? (
         <>
           <h2>Generated Meal Plan</h2>
-          <div>{mealPlan}</div>
-          <div className="d-grid gap-2 col-6 mx-auto">
-            <CButton color="dark" onClick={handleStartAgain}>
-              Start Again
-            </CButton>
-          </div>
+          <pre style={{ fontFamily: 'Segoe UI', fontSize: '17px' }}>{mealPlan}</pre>
+          <CForm>
+            <div className="mb-3">
+              <CFormLabel htmlFor="edit">
+                Enter any changes you would like to make to this plan
+              </CFormLabel>
+              <CFormTextarea
+                id="edit"
+                rows={5}
+                placeholder="No grapes on monday , I want pasta for at least one day , ... , etc."
+              />
+            </div>
+            <div className="d-grid gap-2 col-6 mx-auto">
+              <CButton color="dark" onClick={handleStartAgain}>
+                Start Again
+              </CButton>
+            </div>
+          </CForm>
         </>
       ) : (
         <>
