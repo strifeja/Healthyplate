@@ -103,6 +103,7 @@ const Starter = () => {
                 />
                 <CFormCheck
                   button={{ color: 'dark', variant: 'outline' }}
+                  onClick={handleStartAgain}
                   id="btncheck2"
                   autoComplete="off"
                   label="Start Over"
