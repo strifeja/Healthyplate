@@ -16,11 +16,11 @@ import {
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
-  {
-    component: CNavItem,
-    name: 'Dashboard',
-    to: '/dashboard',
-  },
+  //{
+  //  component: CNavItem,
+  //  name: 'Dashboard',
+  //  to: '/dashboard',
+  //},
   {
     component: CNavItem,
     name: 'Create New Meal Plan',
