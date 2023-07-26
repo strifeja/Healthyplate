@@ -4,8 +4,13 @@ import CIcon from '@coreui/icons-react'
 import axios from 'axios'
 
 const Starter = () => {
+  // State variables for allergies and preferences
   const [allergies, setAllergies] = useState('')
   const [preferences, setPreferences] = useState('')
+  // State variables for max tokens and temperature
+  const [maxTokens, setMaxTokens] = useState(60)
+  const [temperature, setTemperature] = useState(0.5)
+  // State variables for meal plan
   const [showMealPlan, setShowMealPlan] = useState(false)
   const [mealPlan, setMealPlan] = useState('')
   const [api, setApi] = useState('')
@@ -35,6 +40,8 @@ const Starter = () => {
         {
           model: 'gpt-3.5-turbo',
           messages,
+          max_tokens: maxTokens,
+          temperature,
         },
         {
           headers: {
