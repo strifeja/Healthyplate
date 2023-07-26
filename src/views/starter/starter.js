@@ -1,5 +1,14 @@
 import React, { useState } from 'react'
-import { CButton, CForm, CFormControl, CFormInput, CFormLabel, CFormTextarea } from '@coreui/react'
+import {
+  CButton,
+  CButtonGroup,
+  CFormCheck,
+  CForm,
+  CFormControl,
+  CFormInput,
+  CFormLabel,
+  CFormTextarea,
+} from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
 
@@ -8,7 +17,7 @@ const Starter = () => {
   const [allergies, setAllergies] = useState('')
   const [preferences, setPreferences] = useState('')
   // State variables for max tokens and temperature
-  const [maxTokens, setMaxTokens] = useState(150)
+  const [maxTokens, setMaxTokens] = useState(1000)
   const [temperature, setTemperature] = useState(0.5)
   // State variables for meal plan
   const [showMealPlan, setShowMealPlan] = useState(false)
@@ -72,6 +81,7 @@ const Starter = () => {
         <>
           <h2>Generated Meal Plan</h2>
           <pre style={{ fontFamily: 'Segoe UI', fontSize: '17px' }}>{mealPlan}</pre>
+          <hr />
           <CForm>
             <div className="mb-3">
               <CFormLabel htmlFor="edit">
@@ -84,9 +94,26 @@ const Starter = () => {
               />
             </div>
             <div className="d-grid gap-2 col-6 mx-auto">
-              <CButton color="dark" onClick={handleStartAgain}>
-                Start Again
-              </CButton>
+              <CButtonGroup role="group" aria-label="Basic checkbox toggle button group">
+                <CFormCheck
+                  button={{ color: 'dark' }}
+                  id="btncheck1"
+                  autoComplete="off"
+                  label="Generate"
+                />
+                <CFormCheck
+                  button={{ color: 'dark', variant: 'outline' }}
+                  id="btncheck2"
+                  autoComplete="off"
+                  label="Start Over"
+                />
+                <CFormCheck
+                  button={{ color: 'dark' }}
+                  id="btncheck3"
+                  autoComplete="off"
+                  label="Set/Save"
+                />
+              </CButtonGroup>
             </div>
           </CForm>
         </>
