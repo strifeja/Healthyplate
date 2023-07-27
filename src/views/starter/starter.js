@@ -19,6 +19,7 @@ const Starter = () => {
   // State variables for max tokens and temperature
   const [maxTokens, setMaxTokens] = useState(1000)
   const [temperature, setTemperature] = useState(0.5)
+  const [modelType, setModelType] = useState('gpt-3.5-turbo')
   // State variables for meal plan
   const [showMealPlan, setShowMealPlan] = useState(false)
   const [mealPlan, setMealPlan] = useState('')
@@ -33,12 +34,12 @@ const Starter = () => {
   //   setShowMealPlan(true)
   // }
 
-  const sendPostInfo = async (model, messages, max_tokens, temperature) => {
+  const sendPostInfo = async (modelType, messages, maxTokens, temperature) => {
     try {
       const res = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         {
-          model: 'gpt-3.5-turbo',
+          model: modelType,
           messages,
           max_tokens: maxTokens,
           temperature,
@@ -57,19 +58,31 @@ const Starter = () => {
       setMealPlan(`Error: ${error.message}`)
       setShowMealPlan(true)
     }
-  };
+  }
 
   const handleGenerateMealPlan = async () => {
     const systemMessage = {
       role: 'system',
-      content: `You are an AI that is tasked with generating a meal plan for a user taking into account their allergies and preferences. You will make a meal plan that consists of 7 days and has 3 meals for each day.`,
+      content: `You are an AI named HealthyPlate, specializing in generating personalized meal plans for users. " +
+      "You have access to detailed information about the user's dietary preferences and allergies. " +
+      "Your task is to generate a meal plan for the next three days. Each day should include three meals. " +
+      "Make sure none of the meals contain ingredients that the user is allergic to, and each meal should align with the user's dietary preferences. " +
+      "You will generate a meal plan without asking any additional questions from the user. You will not add any additional text to the output. " +
+      "The meal plan should be presented in the following format:\n\n" +
+      "Day 1:\n" +
+      "Breakfast: [Meal name]\n" +
+      "Ingredients: ingredient: amount...\n" +
+      "Lunch: [Meal name]\n" + 
+      "Ingredients: ingredient: amount...\n" +
+      "Dinner: [Meal name]\n" + 
+      "Ingredients: ingredient: amount...\n\n" +`,
     }
     const userPrompt = {
       role: 'user',
       content: `The user has the following allergies: "${allergies}". Their meal preferences are: "${preferences}".`,
     }
     const messages = [systemMessage, userPrompt]
-    sendPostInfo(model, messages, max_tokens, temperature)
+    sendPostInfo(modelType, messages, maxTokens, temperature)
   }
 
   const handleStartAgain = () => {
