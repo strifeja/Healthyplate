@@ -33,16 +33,7 @@ const Starter = () => {
   //   setShowMealPlan(true)
   // }
 
-  const handleGenerateMealPlan = async () => {
-    const systemMessage = {
-      role: 'system',
-      content: `You are an AI that is tasked with generating a meal plan for a user taking into account their allergies and preferences. You will make a meal plan that consists of 7 days and has 3 meals for each day.`,
-    }
-    const userPrompt = {
-      role: 'user',
-      content: `The user has the following allergies: "${allergies}". Their meal preferences are: "${preferences}".`,
-    }
-    const messages = [systemMessage, userPrompt]
+  const sendPostInfo = async (model, messages, max_tokens, temperature) => {
     try {
       const res = await axios.post(
         'https://api.openai.com/v1/chat/completions',
@@ -66,6 +57,19 @@ const Starter = () => {
       setMealPlan(`Error: ${error.message}`)
       setShowMealPlan(true)
     }
+  };
+
+  const handleGenerateMealPlan = async () => {
+    const systemMessage = {
+      role: 'system',
+      content: `You are an AI that is tasked with generating a meal plan for a user taking into account their allergies and preferences. You will make a meal plan that consists of 7 days and has 3 meals for each day.`,
+    }
+    const userPrompt = {
+      role: 'user',
+      content: `The user has the following allergies: "${allergies}". Their meal preferences are: "${preferences}".`,
+    }
+    const messages = [systemMessage, userPrompt]
+    sendPostInfo(model, messages, max_tokens, temperature)
   }
 
   const handleStartAgain = () => {
