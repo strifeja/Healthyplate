@@ -152,7 +152,7 @@ const Starter = () => {
               <CFormLabel htmlFor="Allergies">Enter Allergies Here</CFormLabel>
               <CFormTextarea
                 id="Allergies"
-                rows={8}
+                rows={3}
                 placeholder="Peanuts , Gluten , Bananas , ... , etc."
                 value={allergies}
                 onChange={(e) => setAllergies(e.target.value)}
