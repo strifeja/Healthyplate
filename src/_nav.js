@@ -16,14 +16,9 @@ import {
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
-  //{
-  //  component: CNavItem,
-  //  name: 'Dashboard',
-  //  to: '/dashboard',
-  //},
   {
     component: CNavItem,
-    name: 'Create New Meal Plan',
+    name: 'Meal Prep',
     to: '/starter',
   },
   {
@@ -33,8 +28,13 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Nutrition Tracking',
+    name: 'Nutrition',
     to: '/nutrition',
+  },
+  {
+    component: CNavItem,
+    name: 'Reviews',
+    to: '/reviews',
   },
   /*
   {

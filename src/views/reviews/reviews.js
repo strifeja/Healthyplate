@@ -37,12 +37,12 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-const nutrition = () => {
+const reviews = () => {
   return (
     <div>
-      <h2>Nutrition</h2>
+      <h2>Review Your Meals</h2>
     </div>
   )
 }
 
-export default nutrition
+export default reviews
