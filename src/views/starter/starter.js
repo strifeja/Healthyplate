@@ -8,6 +8,7 @@ import {
   CFormInput,
   CFormLabel,
   CFormTextarea,
+  CSpinner,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
@@ -25,6 +26,8 @@ const Starter = () => {
   const [showMealPlan, setShowMealPlan] = useState(false)
   const [mealPlan, setMealPlan] = useState('')
   const [api, setApi] = useState('')
+
+  const [showSpinner, setShowSpinner] = useState(false)
 
   // const handleGenerateMealPlan = () => {
   //   // Perform any necessary processing to generate the meal plan based on allergies and preferences
@@ -62,6 +65,7 @@ const Starter = () => {
   }
 
   const handleGenerateMealPlan = async () => {
+    setShowSpinner(true)
     const systemMessage = {
       role: 'system',
       content: `You are an AI named HealthyPlate, specializing in generating personalized meal plans for users. " +
@@ -105,6 +109,7 @@ const Starter = () => {
     setPreferences('')
     setMealPlan('')
     setShowMealPlan(false)
+    setShowSpinner(false)
   }
 
   return (
@@ -191,6 +196,7 @@ const Starter = () => {
               <CButton color="dark" onClick={handleGenerateMealPlan}>
                 Generate Meal Plan
               </CButton>
+              {showSpinner && <CSpinner />}
             </div>
           </CForm>
         </>
