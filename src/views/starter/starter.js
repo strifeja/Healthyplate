@@ -193,10 +193,16 @@ const Starter = () => {
               />
             </div>
             <div className="d-grid gap-2 col-6 mx-auto">
-              <CButton color="dark" onClick={handleGenerateMealPlan}>
-                Generate Meal Plan
+              <CButton color="dark" onClick={handleGenerateMealPlan} disabled={showSpinner}>
+                {showSpinner ? (
+                  <>
+                    <span style={{ marginRight: '5px' }}>Generating...</span>
+                    <CSpinner size="sm" color="light" />
+                  </>
+                ) : (
+                  'Generate Meal Plan'
+                )}
               </CButton>
-              {showSpinner && <CSpinner />}
             </div>
           </CForm>
         </>
