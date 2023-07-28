@@ -88,9 +88,21 @@ const Starter = () => {
 
   const handleEditMealPlan = async () => {
     setShowMealPlan(false)
+    const systemMessage = {
+      role: 'system',
+      content: `You are an AI named GroceryListGenerator. Your purpose is to generate a comprehensive grocery list from a given meal plan. " +
+      "Each meal in the plan will have a list of ingredients and their quantities. " +
+      "If an ingredient is used in multiple meals, you must add up the total amount required. " +
+      "For each item on the grocery list, include the name of the item, the total quantity needed, " +
+      "and the section of the grocery store it can be found in (for example, Dairy, Produce, Meat). " +
+      "Your task is to generate this grocery list without asking any additional questions from the user. " +
+      "The grocery list should be presented in the following format:\n\n" +
+      "[Item Number] \t [Item Name] \t [Section Name] \t[Total Quantity]... \n" +
+      "Ensure that all ingredients are listed and appropriately totaled.`,
+    }
     const userPrompt = {
       role: 'user',
-      content: `Here are the following edits on meal plan: "${edit}`,
+      content: `Here is the meal plan you must edit: ${mealPlan}, These are the edist the user wants: "${edit}`,
     }
     const editMealMessage = [mealPlan, userPrompt]
     sendPostInfo(modelType, editMealMessage, maxTokens, temperature)
