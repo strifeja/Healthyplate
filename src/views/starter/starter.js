@@ -16,6 +16,7 @@ const Starter = () => {
   // State variables for allergies and preferences
   const [allergies, setAllergies] = useState('')
   const [preferences, setPreferences] = useState('')
+  const [edit, setEdit] = useState('')
   // State variables for max tokens and temperature
   const [maxTokens, setMaxTokens] = useState(1000)
   const [temperature, setTemperature] = useState(0.5)
@@ -86,19 +87,12 @@ const Starter = () => {
   }
 
   const handleEditMealPlan = async () => {
-    const systemMessage = {
-      role: 'system',
-      content: `You are an AI named GroceryListGenerator. Your purpose is to generate a comprehensive grocery list from a given meal plan. " +
-      "Each meal in the plan will have a list of ingredients and their quantities. " +
-      "If an ingredient is used in multiple meals, you must add up the total amount required. " +
-      "For each item on the grocery list, include the name of the item, the total quantity needed, " +
-      "and the section of the grocery store it can be found in (for example, Dairy, Produce, Meat). " +
-      "Your task is to generate this grocery list without asking any additional questions from the user. " +
-      "The grocery list should be presented in the following format:\n\n" +
-      "[Item Number] \t [Item Name] \t [Section Name] \t[Total Quantity]... \n" +
-      "Ensure that all ingredients are listed and appropriately totaled.`,
+    setShowMealPlan(false)
+    const userPrompt = {
+      role: 'user',
+      content: `Here are the following edits on meal plan: "${edit}`,
     }
-    const editMealMessage = [systemMessage, mealPlan]
+    const editMealMessage = [mealPlan, userPrompt]
     sendPostInfo(modelType, editMealMessage, maxTokens, temperature)
   }
 
@@ -125,12 +119,15 @@ const Starter = () => {
                 id="edit"
                 rows={5}
                 placeholder="No grapes on monday , I want pasta for at least one day , ... , etc."
+                value={edit}
+                onChange={(e) => setEdit(e.target.value)}
               />
             </div>
             <div className="d-grid gap-2 col-6 mx-auto">
               <CButtonGroup role="group" aria-label="Basic checkbox toggle button group">
                 <CFormCheck
                   button={{ color: 'dark' }}
+                  onClick={handleEditMealPlan}
                   id="btncheck1"
                   autoComplete="off"
                   label="Generate"
@@ -144,6 +141,7 @@ const Starter = () => {
                 />
                 <CFormCheck
                   button={{ color: 'dark' }}
+                  onClick={handleEditMealPlan}
                   id="btncheck3"
                   autoComplete="off"
                   label="Set/Save"
