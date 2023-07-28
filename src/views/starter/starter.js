@@ -87,7 +87,6 @@ const Starter = () => {
   }
 
   const handleEditMealPlan = async () => {
-    setShowMealPlan(false)
     const systemMessage = {
       role: 'system',
       content: `You are an AI designed to edit a meal plan that is provided to you with the changes that the user request.`,
@@ -98,6 +97,7 @@ const Starter = () => {
     }
     const editMealMessage = [systemMessage, userPrompt]
     sendPostInfo(modelType, editMealMessage, maxTokens, temperature)
+    setEdit('')
   }
 
   const handleStartAgain = () => {
