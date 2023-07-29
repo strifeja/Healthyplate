@@ -28,6 +28,7 @@ const Starter = () => {
   const [api, setApi] = useState('')
 
   const [showSpinner, setShowSpinner] = useState(false)
+  const [showEditSpinner, setShowEditSpinner] = useState(false)
 
   // const handleGenerateMealPlan = () => {
   //   // Perform any necessary processing to generate the meal plan based on allergies and preferences
@@ -38,7 +39,7 @@ const Starter = () => {
   //   setShowMealPlan(true)
   // }
 
-  const sendPostInfo = async (modelType, messages, maxTokens, temperature) => {
+  const sendPostInfo = async (modelType, messages, maxTokens, temperature, callback) => {
     try {
       const res = await axios.post(
         'https://api.openai.com/v1/chat/completions',
@@ -61,6 +62,10 @@ const Starter = () => {
       console.log(error)
       setMealPlan(`Error: ${error.message}`)
       setShowMealPlan(true)
+    } finally {
+      if (callback) {
+        callback()
+      }
     }
   }
 
@@ -87,10 +92,11 @@ const Starter = () => {
       content: `The user has the following allergies: "${allergies}". Their meal preferences are: "${preferences}".`,
     }
     const mealMessage = [systemMessage, userPrompt]
-    sendPostInfo(modelType, mealMessage, maxTokens, temperature)
+    sendPostInfo(modelType, mealMessage, maxTokens, temperature, () => setShowSpinner(false))
   }
 
   const handleEditMealPlan = async () => {
+    setShowEditSpinner(true)
     const systemMessage = {
       role: 'system',
       content: `You are an AI designed to edit a meal plan that is provided to you with the changes that the user request.`,
@@ -100,7 +106,9 @@ const Starter = () => {
       content: `Here is the meal plan you must edit: "${mealPlan}", These are the edist the user wants: "${edit}"`,
     }
     const editMealMessage = [systemMessage, userPrompt]
-    sendPostInfo(modelType, editMealMessage, maxTokens, temperature)
+    sendPostInfo(modelType, editMealMessage, maxTokens, temperature, () =>
+      setShowEditSpinner(false),
+    )
     setEdit('')
   }
 
@@ -115,7 +123,14 @@ const Starter = () => {
   return (
     <div>
       {showMealPlan ? (
-        <>
+        <div
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '10px',
+            padding: '20px',
+            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+          }}
+        >
           <h2>Generated Meal Plan</h2>
           <pre style={{ fontFamily: 'Segoe UI', fontSize: '17px' }}>{mealPlan}</pre>
           <hr />
@@ -139,7 +154,17 @@ const Starter = () => {
                   onClick={handleEditMealPlan}
                   id="btncheck1"
                   autoComplete="off"
-                  label="Generate"
+                  label={
+                    showEditSpinner ? (
+                      <>
+                        <span style={{ marginRight: '5px' }}>Editing...</span>
+                        <CSpinner size="sm" color="light" />
+                      </>
+                    ) : (
+                      'Generate'
+                    )
+                  }
+                  disabled={showEditSpinner}
                 />
                 <CFormCheck
                   button={{ color: 'dark', variant: 'outline' }}
@@ -147,6 +172,7 @@ const Starter = () => {
                   id="btncheck2"
                   autoComplete="off"
                   label="Start Over"
+                  disabled={showEditSpinner}
                 />
                 <CFormCheck
                   button={{ color: 'dark' }}
@@ -154,11 +180,12 @@ const Starter = () => {
                   id="btncheck3"
                   autoComplete="off"
                   label="Set/Save"
+                  disabled={showEditSpinner}
                 />
               </CButtonGroup>
             </div>
           </CForm>
-        </>
+        </div>
       ) : (
         <>
           <h2>Create a New Meal Plan</h2>
