@@ -26,18 +26,9 @@ const Starter = () => {
   const [showMealPlan, setShowMealPlan] = useState(false)
   const [mealPlan, setMealPlan] = useState('')
   const [api, setApi] = useState('')
-
+  //Loading spinners for buttons
   const [showSpinner, setShowSpinner] = useState(false)
   const [showEditSpinner, setShowEditSpinner] = useState(false)
-
-  // const handleGenerateMealPlan = () => {
-  //   // Perform any necessary processing to generate the meal plan based on allergies and preferences
-  //   // For example, you can use the "allergies" and "preferences" state values to create the meal plan
-  //   // For now, we will just show a simple message
-  //   const generatedMealPlan = `Your meal plan based on allergies "${allergies}" and preferences "${preferences}" will be displayed here.`
-  //   setMealPlan(generatedMealPlan)
-  //   setShowMealPlan(true)
-  // }
 
   const sendPostInfo = async (modelType, messages, maxTokens, temperature, callback) => {
     try {
@@ -73,12 +64,12 @@ const Starter = () => {
     setShowSpinner(true)
     const systemMessage = {
       role: 'system',
-      content: `You are an AI named HealthyPlate, specializing in generating personalized meal plans for users. " +
-      "You have access to detailed information about the user's dietary preferences and allergies. " +
-      "Your task is to generate a meal plan for the next three days. Each day should include three meals. " +
-      "Make sure none of the meals contain ingredients that the user is allergic to, and each meal should align with the user's dietary preferences. " +
-      "You will generate a meal plan without asking any additional questions from the user. You will not add any additional text to the output. " +
-      "The meal plan should be presented in the following format:\n\n" +
+      content: `You are an AI named HealthyPlate, specializing in generating personalized meal plans for users.  
+      You have access to detailed information about the user's dietary preferences and allergies. 
+      Your task is to generate a meal plan for the next three days. Each day should include three meals. 
+      Make sure none of the meals contain ingredients that the user is allergic to, and each meal should align with the user's dietary preferences. 
+      You will generate a meal plan without asking any additional questions from the user. You will not add any additional text to the output. 
+      The meal plan should be presented in the following format:\n\n" +
       "Day 1:\n" +
       "Breakfast: [Meal name]\n" +
       "Ingredients: ingredient: amount...\n" +
@@ -99,11 +90,12 @@ const Starter = () => {
     setShowEditSpinner(true)
     const systemMessage = {
       role: 'system',
-      content: `You are an AI designed to edit a meal plan that is provided to you with the changes that the user request.`,
+      content: `You are an AI designed to edit a meal plan that is provided to you with the changes that the user requests.  
+      Make sure to keep the same format that the meal plan was provided to you in`,
     }
     const userPrompt = {
       role: 'user',
-      content: `Here is the meal plan you must edit: "${mealPlan}", These are the edist the user wants: "${edit}"`,
+      content: `Here is the meal plan you must edit: "${mealPlan}", These are the edits the user has requested: "${edit}"`,
     }
     const editMealMessage = [systemMessage, userPrompt]
     sendPostInfo(modelType, editMealMessage, maxTokens, temperature, () =>
@@ -179,7 +171,7 @@ const Starter = () => {
                   onClick={handleEditMealPlan}
                   id="btncheck3"
                   autoComplete="off"
-                  label="Set/Save"
+                  label="Save Plan"
                   disabled={showEditSpinner}
                 />
               </CButtonGroup>
