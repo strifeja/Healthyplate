@@ -53,6 +53,11 @@ export class Meal {
 export class MealPlan {
   constructor(meals) {
     this.meals = meals // This should be an array of Meal objects
+    this.log = [] // This should hold the log entries
+  }
+
+  updateLog(entry) {
+    this.log.push(entry)
   }
 
   async generatePlan(
@@ -75,10 +80,10 @@ export class MealPlan {
       Make sure none of the meals contain ingredients that the user is allergic to, and each meal should align with the user's dietary preferences. 
       You will generate a meal plan without asking any additional questions from the user. You will not add any additional text to the output. 
       The meal plan should be presented in the following example format, make sure to generate the correct number of days and meals per day:\n\n" +
-      "Day 1:\n" +
-      "Meal 1: [Meal name]\n" +
-      "Ingredients: ingredient: amount...\n" +
-      "Recipe: recipe description`,
+      Day 1: 
+      Meal 1: [Meal name] 
+      Ingredients: ingredient: amount... 
+      Recipe: recipe description...\n`,
     }
     const userPrompt = {
       role: 'user',
@@ -87,19 +92,40 @@ export class MealPlan {
     const mealMessage = [systemMessage, userPrompt]
 
     // Call sendPostInfo and get the meal plan
-    const mealPlan = await sendPostInfo(modelType, mealMessage, maxTokens, temperature, api)
+    const mealPlan = await sendPostInfo('gpt-4', mealMessage, maxTokens, temperature, api)
+
     return mealPlan
   }
 
-  async editPlan(mealPlan, editRequest, modelType, maxTokens, temperature, api) {
+  async editPlan(
+    mealPlan,
+    editRequest,
+    modelType,
+    maxTokens,
+    temperature,
+    api,
+    numberOfDays,
+    mealsPerDay,
+  ) {
     const systemMessage = {
       role: 'system',
       content: `You are an AI designed to edit a meal plan that is provided to you with the changes that the user requests.  
-      Make sure to keep the same format that the meal plan was provided to you in`,
+      You will not add any additional text before or after the meal plan.
+      You will be provided with the three thing. First the meal plan. Second the edits the user requests. 
+      Third the number of days and number of meals per day.
+      If the users edit is empty of deos not have to do with food ignore it.
+      If the number of days or number of meals per day is different than the meal plan provided then you may add or remove any days or meals neccessary.
+      When adding meals try to base them on existing meals as well as the users edit provided.
+      Example format for one day and one meal, make sure the meal plan has the correct number of days and meals per day:
+      Day 1: 
+      Meal 1: [Meal name] 
+      Ingredients: ingredient: amount...
+      Recipe: recipe description...\n`,
     }
     const userPrompt = {
       role: 'user',
-      content: `Here is the meal plan you must edit: "${mealPlan}", These are the edits the user has requested: "${editRequest}"`,
+      content: `Here is the meal plan you must edit: "${mealPlan}", These are the edits the user has requested: "${editRequest}, ".
+      Additionally the user requests the meal plan to be for ${numberOfDays} days and ${mealsPerDay} meals per day.`,
     }
     const editMealMessage = [systemMessage, userPrompt]
 
@@ -111,6 +137,7 @@ export class MealPlan {
       temperature,
       api,
     )
+
     return editedMealPlan
   }
 }
