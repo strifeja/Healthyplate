@@ -12,6 +12,7 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
+import { MealPlan, sendPostInfo } from '../../System.js'
 
 const Starter = () => {
   // State variables for allergies and preferences
@@ -30,77 +31,37 @@ const Starter = () => {
   const [showSpinner, setShowSpinner] = useState(false)
   const [showEditSpinner, setShowEditSpinner] = useState(false)
 
-  const sendPostInfo = async (modelType, messages, maxTokens, temperature, callback) => {
-    try {
-      const res = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          model: modelType,
-          messages,
-          max_tokens: maxTokens,
-          temperature,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ` + api,
-          },
-        },
-      )
-      setMealPlan(res.data.choices[0].message.content)
-      setShowMealPlan(true)
-    } catch (error) {
-      console.log(error)
-      setMealPlan(`Error: ${error.message}`)
-      setShowMealPlan(true)
-    } finally {
-      if (callback) {
-        callback()
-      }
-    }
-  }
-
   const handleGenerateMealPlan = async () => {
     setShowSpinner(true)
-    const systemMessage = {
-      role: 'system',
-      content: `You are an AI named HealthyPlate, specializing in generating personalized meal plans for users.  
-      You have access to detailed information about the user's dietary preferences and allergies. 
-      Your task is to generate a meal plan for the next three days. Each day should include three meals. 
-      Make sure none of the meals contain ingredients that the user is allergic to, and each meal should align with the user's dietary preferences. 
-      You will generate a meal plan without asking any additional questions from the user. You will not add any additional text to the output. 
-      The meal plan should be presented in the following format:\n\n" +
-      "Day 1:\n" +
-      "Breakfast: [Meal name]\n" +
-      "Ingredients: ingredient: amount...\n" +
-      "Lunch: [Meal name]\n" + 
-      "Ingredients: ingredient: amount...\n" +
-      "Dinner: [Meal name]\n" + 
-      "Ingredients: ingredient: amount...\n\n" +`,
-    }
-    const userPrompt = {
-      role: 'user',
-      content: `The user has the following allergies: "${allergies}". Their meal preferences are: "${preferences}".`,
-    }
-    const mealMessage = [systemMessage, userPrompt]
-    sendPostInfo(modelType, mealMessage, maxTokens, temperature, () => setShowSpinner(false))
+    // Create a new meal plan
+    const mealPlanObj = new MealPlan([])
+    const mealPlanStr = await mealPlanObj.generatePlan(
+      allergies,
+      preferences,
+      modelType,
+      maxTokens,
+      temperature,
+      api,
+    )
+    setMealPlan(mealPlanStr)
+    setShowMealPlan(true)
+    setShowSpinner(false)
   }
 
   const handleEditMealPlan = async () => {
     setShowEditSpinner(true)
-    const systemMessage = {
-      role: 'system',
-      content: `You are an AI designed to edit a meal plan that is provided to you with the changes that the user requests.  
-      Make sure to keep the same format that the meal plan was provided to you in`,
-    }
-    const userPrompt = {
-      role: 'user',
-      content: `Here is the meal plan you must edit: "${mealPlan}", These are the edits the user has requested: "${edit}"`,
-    }
-    const editMealMessage = [systemMessage, userPrompt]
-    sendPostInfo(modelType, editMealMessage, maxTokens, temperature, () =>
-      setShowEditSpinner(false),
+    // Create a new meal plan
+    const mealPlanObj = new MealPlan([])
+    const editedMealPlanStr = await mealPlanObj.editPlan(
+      mealPlan,
+      edit,
+      modelType,
+      maxTokens,
+      temperature,
+      api,
     )
+    setMealPlan(editedMealPlanStr)
+    setShowEditSpinner(false)
     setEdit('')
   }
 
