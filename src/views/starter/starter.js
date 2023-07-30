@@ -9,6 +9,8 @@ import {
   CFormLabel,
   CFormTextarea,
   CSpinner,
+  CRow,
+  CCol,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
@@ -30,6 +32,9 @@ const Starter = () => {
   //Loading spinners for buttons
   const [showSpinner, setShowSpinner] = useState(false)
   const [showEditSpinner, setShowEditSpinner] = useState(false)
+  // State variables for number of days and meals
+  const [numberOfDays, setNumberOfDays] = useState(3) // Default value 3
+  const [mealsPerDay, setMealsPerDay] = useState(3) // Default value 3
 
   const handleGenerateMealPlan = async () => {
     setShowSpinner(true)
@@ -42,6 +47,8 @@ const Starter = () => {
       maxTokens,
       temperature,
       api,
+      numberOfDays,
+      mealsPerDay,
     )
     setMealPlan(mealPlanStr)
     setShowMealPlan(true)
@@ -152,6 +159,48 @@ const Starter = () => {
                 onChange={(e) => setApi(e.target.value)}
               />
             </div>
+            <CRow>
+              <CCol md="6">
+                <div className="mb-3">
+                  <CFormLabel htmlFor="numberOfDays" className="form-label">
+                    Number of Days
+                  </CFormLabel>
+                  <select
+                    id="numberOfDays"
+                    value={numberOfDays}
+                    onChange={(e) => setNumberOfDays(e.target.value)}
+                    className="form-select"
+                    aria-label="Default select example"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </CCol>
+              <CCol md="6">
+                <div className="mb-3">
+                  <CFormLabel htmlFor="mealsPerDay" className="form-label">
+                    Meals per Day
+                  </CFormLabel>
+                  <select
+                    id="mealsPerDay"
+                    value={mealsPerDay}
+                    onChange={(e) => setMealsPerDay(e.target.value)}
+                    className="form-select"
+                    aria-label="Default select example"
+                  >
+                    {[1, 2, 3, 4].map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </CCol>
+            </CRow>
             <div className="mb-3">
               <CFormLabel htmlFor="Allergies">Enter Allergies Here</CFormLabel>
               <CFormTextarea

@@ -55,22 +55,30 @@ export class MealPlan {
     this.meals = meals // This should be an array of Meal objects
   }
 
-  async generatePlan(allergies, preferences, modelType, maxTokens, temperature, api) {
+  async generatePlan(
+    allergies,
+    preferences,
+    modelType,
+    maxTokens,
+    temperature,
+    api,
+    numberOfDays,
+    mealsPerDay,
+  ) {
+    this.numberOfDays = numberOfDays
+    this.mealsPerDay = mealsPerDay
     const systemMessage = {
       role: 'system',
       content: `You are an AI named HealthyPlate, specializing in generating personalized meal plans for users.  
       You have access to detailed information about the user's dietary preferences and allergies. 
-      Your task is to generate a meal plan for the next three days. Each day should include three meals. 
+      Your task is to generate a meal plan for "${numberOfDays}" days. Each day should include "${mealsPerDay}" meals per day. 
       Make sure none of the meals contain ingredients that the user is allergic to, and each meal should align with the user's dietary preferences. 
       You will generate a meal plan without asking any additional questions from the user. You will not add any additional text to the output. 
-      The meal plan should be presented in the following format:\n\n" +
+      The meal plan should be presented in the following example format, make sure to generate the correct number of days and meals per day:\n\n" +
       "Day 1:\n" +
-      "Breakfast: [Meal name]\n" +
+      "Meal 1: [Meal name]\n" +
       "Ingredients: ingredient: amount...\n" +
-      "Lunch: [Meal name]\n" + 
-      "Ingredients: ingredient: amount...\n" +
-      "Dinner: [Meal name]\n" + 
-      "Ingredients: ingredient: amount...\n\n" +`,
+      "Recipe: recipe description`,
     }
     const userPrompt = {
       role: 'user',
