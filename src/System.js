@@ -36,17 +36,13 @@ export class Ingredient {
   }
 }
 
-export class Recipe {
-  constructor(name, ingredients) {
+export class Meal {
+  constructor(day, mealNumber, name, ingredients, instructions) {
+    this.day = day
+    this.mealNumber = mealNumber
     this.name = name
     this.ingredients = ingredients // This should be an array of Ingredient objects
-  }
-}
-
-export class Meal {
-  constructor(name, recipe) {
-    this.name = name
-    this.recipe = recipe // This should be a Recipe object
+    this.instructions = instructions // This should be an array of strings
   }
 }
 
@@ -60,30 +56,22 @@ export class MealPlan {
     this.log.push(entry)
   }
 
-  async generatePlan(
-    allergies,
-    preferences,
-    modelType,
-    maxTokens,
-    temperature,
-    api,
-    numberOfDays,
-    mealsPerDay,
-  ) {
+  async generatePlan(allergies, preferences, modelType, mode, api, numberOfDays, mealsPerDay) {
     this.numberOfDays = numberOfDays
     this.mealsPerDay = mealsPerDay
+    let { rules, temperature, maxTokens } = this.getRuleSet(mode)
+    console.log(mode)
     const systemMessage = {
       role: 'system',
-      content: `You are an AI named HealthyPlate, specializing in generating personalized meal plans for users.  
-      You have access to detailed information about the user's dietary preferences and allergies. 
-      Your task is to generate a meal plan for "${numberOfDays}" days. Each day should include "${mealsPerDay}" meals per day. 
-      Make sure none of the meals contain ingredients that the user is allergic to, and each meal should align with the user's dietary preferences. 
-      You will generate a meal plan without asking any additional questions from the user. You will not add any additional text to the output. 
-      The meal plan should be presented in the following example format, make sure to generate the correct number of days and meals per day:\n\n" +
-      Day 1: 
-      Meal 1: [Meal name] 
-      Ingredients: ingredient: amount... 
-      Recipe: recipe description...\n`,
+      content: `You are HealthyPlate, an AI assistant that specializes in creating personalized meal plans based on user's dietary preferences and allergies. 
+      Your task is to generate a meal plan for "${numberOfDays}" days, with each day including "${mealsPerDay}" meals. 
+      Ensure that no meals contain ingredients to which the user is allergic, and that each meal aligns with the user's dietary preferences. 
+      You should not ask the user any additional questions and must not add any additional text to the meal plan output.
+      Make sure to generate the correct number of days and meals per day as requested by the user.
+      
+      The meal plan you generate should strictly adhere to the following format:
+      
+      ${rules}`,
     }
     const userPrompt = {
       role: 'user',
@@ -92,35 +80,25 @@ export class MealPlan {
     const mealMessage = [systemMessage, userPrompt]
 
     // Call sendPostInfo and get the meal plan
-    const mealPlan = await sendPostInfo('gpt-4', mealMessage, maxTokens, temperature, api)
+    const mealPlan = await sendPostInfo(modelType, mealMessage, 1000, 0.5, api)
 
     return mealPlan
   }
 
-  async editPlan(
-    mealPlan,
-    editRequest,
-    modelType,
-    maxTokens,
-    temperature,
-    api,
-    numberOfDays,
-    mealsPerDay,
-  ) {
+  async editPlan(mealPlan, editRequest, modelType, mode, api, numberOfDays, mealsPerDay) {
+    this.numberOfDays = numberOfDays
+    this.mealsPerDay = mealsPerDay
+    let { rules, temperature, maxTokens } = this.getRuleSet(mode)
     const systemMessage = {
       role: 'system',
-      content: `You are an AI designed to edit a meal plan that is provided to you with the changes that the user requests.  
-      You will not add any additional text before or after the meal plan.
-      You will be provided with the three thing. First the meal plan. Second the edits the user requests. 
-      Third the number of days and number of meals per day.
-      If the users edit is empty of deos not have to do with food ignore it.
-      If the number of days or number of meals per day is different than the meal plan provided then you may add or remove any days or meals neccessary.
-      When adding meals try to base them on existing meals as well as the users edit provided.
-      Example format for one day and one meal, make sure the meal plan has the correct number of days and meals per day:
-      Day 1: 
-      Meal 1: [Meal name] 
-      Ingredients: ingredient: amount...
-      Recipe: recipe description...\n`,
+      content: `You are HealthyPlate, an AI assistant with a specialty in creating and editing personalized meal plans.
+      Your task is to adjust the provided meal plan based on the user's requested edits, the specified number of days, and the number of meals per day. 
+      If the user's edit request is empty or unrelated to the meal plan, you should ignore it. If the specified number of days or meals per day differs from the provided meal plan, you should modify the plan accordingly by adding or removing meals or days as necessary. When adding meals, try to base them on existing meals in the plan and take into account the user's edit request.
+      You should not ask the user any additional questions and must not add any additional text to the meal plan output.
+     
+      The meal plan format you should follow is as follows:
+     
+      ${rules}`,
     }
     const userPrompt = {
       role: 'user',
@@ -139,6 +117,48 @@ export class MealPlan {
     )
 
     return editedMealPlan
+  }
+
+  getRuleSet(mode) {
+    switch (mode) {
+      case 'Default':
+        return {
+          rules: `- Start a new day with "Day:" followed by a space and the day number. Add a newline after this.
+          - Start a new meal with "Meal" followed by a space, the meal number, a colon and another space. After this put the name of the meal. Example: "Meal 1: Chicken Teriyaki. Add a newline after this.
+          - List the ingredients with "Ingredients:" followed by a newline. Each ingredient should be on a new line, prefixed with a dash (-) and a space, and should be formatted as follows: "Ingredient name: Quantity Measurement". For example: "- Chicken: 2 lbs". Quantities should be represented as a string and can be either decimal or fraction. For decimals, use a period (".") for example: "~ "Chicken":"0.5":"lbs". For fractions, use a forward slash ("/") for example: "~ "Chicken":"1/2":"lbs".`,
+          temperature: 0.5, // Replace with the temperature for Mode 1
+          maxTokens: 1000, // Replace with the max tokens for Mode 1
+        }
+      case 'Recipe':
+        return {
+          rules: `- Start a new day with "Day:" followed by a space and the day number. Add a newline after this.
+          - Start a new meal with "Meal" followed by a space, the meal number, a colon and another space. After this put the name of the meal. Example: "Meal 1: Chicken Teriyaki. Add a newline after this.
+          - List the ingredients with "Ingredients:" followed by a newline. Each ingredient should be on a new line, prefixed with a dash (-) and a space, and should be formatted as follows: "Ingredient name: Quantity Measurement". For example: "- Chicken: 2 lbs". Quantities should be represented as a string and can be either decimal or fraction. For decimals, use a period (".") for example: "~ "Chicken":"0.5":"lbs". For fractions, use a forward slash ("/") for example: "~ "Chicken":"1/2":"lbs".
+          - Describe the recipe with "Recipe:" followed by a newline. Each step of the recipe should be on a new line, prefixed with a dash (-) and a space, and should start with a verb. If there are multiple steps, they should be separated by a period followed by a space.`,
+          temperature: 0.6, // Replace with the temperature for Mode 2
+          maxTokens: 1500, // Replace with the max tokens for Mode 2
+        }
+      // Add more cases as needed
+      case 'Test': // This will be the "Default" mode
+        return {
+          rules: `- Start a new day with "#Day:" followed by a space and the day number. Add a newline after this.
+          - Start a new meal with "#Meal:" followed by a space and the meal number. Add a newline after this.
+          - Provide the meal title with "#Title:" followed by a space and the title of the meal. This should be on the same line.
+          - List the ingredients with "#Ingredients:" followed by a newline. Each ingredient should be on a new line, prefixed with a tilde (~) and a space, and should be formatted as follows: "Ingredient name:Quantity:Measurement". For example: "~ Chicken:2:lbs".
+          - Describe the recipe with "#Recipe:" followed by a newline. Each step of the recipe should be on a new line, prefixed with a tilde (~) and a space.`,
+          temperature: 0.5, // Replace with the default temperature
+          maxTokens: 1500, // Replace with the default max tokens
+        }
+    }
+  }
+
+  convertPlan(mealPlanStr) {
+    // Need to add
+    //Convert string Meal Plan to Meal Objects
+  }
+
+  getPlanString() {
+    // Need to add
   }
 }
 
