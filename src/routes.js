@@ -7,6 +7,7 @@ const nutrition = React.lazy(() => import('./views/nutrition/nutrition'))
 const reviews = React.lazy(() => import('./views/reviews/reviews'))
 const bmr = React.lazy(() => import('./views/nutrition/bmr'))
 const calorie = React.lazy(() => import('./views/nutrition/calorie'))
+const settings = React.lazy(() => import('./views/settings/settings'))
 
 const routes = [
   //{ path: '/', exact: true, name: 'Home' },
@@ -17,5 +18,6 @@ const routes = [
   { path: '/reviews', name: 'Reviews', element: reviews },
   { path: '/bmr', name: 'BMR Tracker', element: bmr },
   { path: '/calorie', name: 'Calorie Tracker', element: calorie },
+  { path: '/settings', name: 'Settings and Support', element: settings },
 ]
 export default routes

@@ -36,7 +36,7 @@ const AppHeader = () => {
         </CHeaderBrand>
         <CHeaderNav className="d-none d-md-flex me-auto">
           <CNavItem>
-            <CNavLink to="/dashboard" component={NavLink}>
+            <CNavLink to="/starter" component={NavLink}>
               HealthyPlate
             </CNavLink>
           </CNavItem>
@@ -44,9 +44,9 @@ const AppHeader = () => {
               <CNavLink href="#">Users</CNavLink>
             </CNavItem>*/}
         </CHeaderNav>
-        <CHeaderNav className="ms-3">
+        {/* <CHeaderNav className="ms-3">
           <AppHeaderDropdown />
-        </CHeaderNav>
+        </CHeaderNav> */}
         {/*<CHeaderNav>
           <CNavItem>
             <CNavLink href="#">

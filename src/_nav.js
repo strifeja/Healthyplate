@@ -36,6 +36,11 @@ const _nav = [
     name: 'Reviews',
     to: '/reviews',
   },
+  {
+    component: CNavItem,
+    name: 'Settings and Support',
+    to: '/settings',
+  },
   /*
   {
     component: CNavTitle,
