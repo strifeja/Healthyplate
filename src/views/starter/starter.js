@@ -37,6 +37,8 @@ const Starter = () => {
   const [mealsPerDay, setMealsPerDay] = useState(3) // Default value 3
   // Meal Plan Object
   const [mealPlanObj, setMealPlanObj] = useState(null)
+  // Mode
+  const [mode, setMode] = useState('Default')
 
   const handleGenerateMealPlan = async () => {
     setShowSpinner(true)
@@ -46,8 +48,7 @@ const Starter = () => {
       allergies,
       preferences,
       modelType,
-      maxTokens,
-      temperature,
+      mode,
       api,
       numberOfDays,
       mealsPerDay,
@@ -76,8 +77,7 @@ const Starter = () => {
       mealPlan,
       edit,
       modelType,
-      maxTokens,
-      temperature,
+      mode,
       api,
       numberOfDays,
       mealsPerDay,
@@ -230,7 +230,7 @@ const Starter = () => {
               />
             </div>
             <CRow>
-              <CCol md="6">
+              <CCol md="4">
                 <div className="mb-3">
                   <CFormLabel htmlFor="numberOfDays" className="form-label">
                     Number of Days
@@ -250,7 +250,7 @@ const Starter = () => {
                   </select>
                 </div>
               </CCol>
-              <CCol md="6">
+              <CCol md="4">
                 <div className="mb-3">
                   <CFormLabel htmlFor="mealsPerDay" className="form-label">
                     Meals per Day
@@ -267,6 +267,25 @@ const Starter = () => {
                         {n}
                       </option>
                     ))}
+                  </select>
+                </div>
+              </CCol>
+              <CCol md="4">
+                <div className="mb-3">
+                  <CFormLabel htmlFor="Mode" className="form-label">
+                    Mode
+                  </CFormLabel>
+                  <select
+                    id="Mode"
+                    value={mode}
+                    onChange={(e) => setMode(e.target.value)}
+                    className="form-select"
+                    aria-label="Default select example"
+                  >
+                    <option value="Default">Default</option>
+                    <option value="Recipe">Mode 1</option>
+                    <option value="Test">Mode 2</option>
+                    {/* Add more options as needed */}
                   </select>
                 </div>
               </CCol>

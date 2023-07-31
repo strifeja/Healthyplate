@@ -45,6 +45,7 @@
     "simplebar-react": "^2.4.3"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -58,5 +59,13 @@
   "engines": {
     "node": ">=10",
     "npm": ">=6"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!axios).+\\.js$"
+    ]
   }
 }
