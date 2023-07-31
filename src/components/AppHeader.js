@@ -41,11 +41,11 @@ const AppHeader = () => {
             </CNavLink>
           </CNavItem>
           {/*<CNavItem>
-            <CNavLink href="#">Users</CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">Settings</CNavLink>
-          </CNavItem>*/}
+              <CNavLink href="#">Users</CNavLink>
+            </CNavItem>*/}
+        </CHeaderNav>
+        <CHeaderNav className="ms-3">
+          <AppHeaderDropdown />
         </CHeaderNav>
         {/*<CHeaderNav>
           <CNavItem>
