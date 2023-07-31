@@ -56,10 +56,10 @@ export class MealPlan {
     this.log.push(entry)
   }
 
-  async generatePlan(allergies, preferences, modelType, mode, api, numberOfDays, mealsPerDay) {
+  async generatePlan(allergies, preferences, mode, api, numberOfDays, mealsPerDay) {
     this.numberOfDays = numberOfDays
     this.mealsPerDay = mealsPerDay
-    let { rules, temperature, maxTokens } = this.getRuleSet(mode)
+    let { rules, temperature, maxTokens, modelType } = this.getRuleSet(mode)
     console.log(mode)
     const systemMessage = {
       role: 'system',
@@ -80,15 +80,15 @@ export class MealPlan {
     const mealMessage = [systemMessage, userPrompt]
 
     // Call sendPostInfo and get the meal plan
-    const mealPlan = await sendPostInfo(modelType, mealMessage, 1000, 0.5, api)
+    const mealPlan = await sendPostInfo(modelType, mealMessage, maxTokens, temperature, api)
 
     return mealPlan
   }
 
-  async editPlan(mealPlan, editRequest, modelType, mode, api, numberOfDays, mealsPerDay) {
+  async editPlan(mealPlan, editRequest, mode, api, numberOfDays, mealsPerDay) {
     this.numberOfDays = numberOfDays
     this.mealsPerDay = mealsPerDay
-    let { rules, temperature, maxTokens } = this.getRuleSet(mode)
+    let { rules, temperature, maxTokens, modelType } = this.getRuleSet(mode)
     const systemMessage = {
       role: 'system',
       content: `You are HealthyPlate, an AI assistant with a specialty in creating and editing personalized meal plans.
@@ -121,33 +121,40 @@ export class MealPlan {
 
   getRuleSet(mode) {
     switch (mode) {
-      case 'Default':
+      case 'Fast':
         return {
           rules: `- Start a new day with "Day:" followed by a space and the day number. Add a newline after this.
           - Start a new meal with "Meal" followed by a space, the meal number, a colon and another space. After this put the name of the meal. Example: "Meal 1: Chicken Teriyaki. Add a newline after this.
-          - List the ingredients with "Ingredients:" followed by a newline. Each ingredient should be on a new line, prefixed with a dash (-) and a space, and should be formatted as follows: "Ingredient name: Quantity Measurement". For example: "- Chicken: 2 lbs". Quantities should be represented as a string and can be either decimal or fraction. For decimals, use a period (".") for example: "~ "Chicken":"0.5":"lbs". For fractions, use a forward slash ("/") for example: "~ "Chicken":"1/2":"lbs".`,
-          temperature: 0.5, // Replace with the temperature for Mode 1
-          maxTokens: 1000, // Replace with the max tokens for Mode 1
+          - List the ingredients by starting with "Ingredients: "  Each ingredient should seperated by a comma (,) and a space, and should be formatted as follows: "Ingredient name: Quantity Measurement". For example: "- Chicken: 2 lbs". 
+          - Quantities should be represented as a string and can be either decimal or fraction. For decimals, use a period (".") for example: "~ "Chicken":"0.5":"lbs". For fractions, use a forward slash ("/") for example: "~ "Chicken":"1/2":"lbs".
+          - List all ingredients on the same line and make sure they are seperated by a coma. Make sure they are all on the same line. Do NOT use dashes`,
+          temperature: 0.5,
+          maxTokens: 700,
+          modelType: 'gpt-3.5-turbo',
         }
-      case 'Recipe':
+      case 'Detailed':
         return {
           rules: `- Start a new day with "Day:" followed by a space and the day number. Add a newline after this.
           - Start a new meal with "Meal" followed by a space, the meal number, a colon and another space. After this put the name of the meal. Example: "Meal 1: Chicken Teriyaki. Add a newline after this.
-          - List the ingredients with "Ingredients:" followed by a newline. Each ingredient should be on a new line, prefixed with a dash (-) and a space, and should be formatted as follows: "Ingredient name: Quantity Measurement". For example: "- Chicken: 2 lbs". Quantities should be represented as a string and can be either decimal or fraction. For decimals, use a period (".") for example: "~ "Chicken":"0.5":"lbs". For fractions, use a forward slash ("/") for example: "~ "Chicken":"1/2":"lbs".
+          - List the ingredients with "Ingredients:" followed by a newline. Each ingredient should seperated by a comma (,) and a space, and should be formatted as follows: "Ingredient name: Quantity Measurement". For example: "- Chicken: 2 lbs". 
+          - List only 4 ingredients per line and make a newline after 4 ingredients have been listed on that line. Repeat until all ingredients are listed. For example "Chicken: 2 lbs, Mozzarella cheese: 1/2 cup, Tomatoes: 2, Onion: 1/4 cup"
+          - Quantities should be represented as a string and can be either decimal or fraction. For decimals, use a period (".") for example: "~ "Chicken":"0.5":"lbs". For fractions, use a forward slash ("/") for example: "~ "Chicken":"1/2":"lbs".
           - Describe the recipe with "Recipe:" followed by a newline. Each step of the recipe should be on a new line, prefixed with a dash (-) and a space, and should start with a verb. If there are multiple steps, they should be separated by a period followed by a space.`,
-          temperature: 0.6, // Replace with the temperature for Mode 2
-          maxTokens: 1500, // Replace with the max tokens for Mode 2
+          temperature: 0.5,
+          maxTokens: 1500,
+          modelType: 'gpt-4',
         }
       // Add more cases as needed
-      case 'Test': // This will be the "Default" mode
+      case 'Test':
         return {
           rules: `- Start a new day with "#Day:" followed by a space and the day number. Add a newline after this.
           - Start a new meal with "#Meal:" followed by a space and the meal number. Add a newline after this.
           - Provide the meal title with "#Title:" followed by a space and the title of the meal. This should be on the same line.
           - List the ingredients with "#Ingredients:" followed by a newline. Each ingredient should be on a new line, prefixed with a tilde (~) and a space, and should be formatted as follows: "Ingredient name:Quantity:Measurement". For example: "~ Chicken:2:lbs".
           - Describe the recipe with "#Recipe:" followed by a newline. Each step of the recipe should be on a new line, prefixed with a tilde (~) and a space.`,
-          temperature: 0.5, // Replace with the default temperature
-          maxTokens: 1500, // Replace with the default max tokens
+          temperature: 0.5,
+          maxTokens: 1500,
+          modelType: 'gpt-3.5-turbo',
         }
     }
   }

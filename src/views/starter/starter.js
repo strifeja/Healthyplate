@@ -21,10 +21,6 @@ const Starter = () => {
   const [allergies, setAllergies] = useState('')
   const [preferences, setPreferences] = useState('')
   const [edit, setEdit] = useState('')
-  // State variables for max tokens and temperature
-  const [maxTokens, setMaxTokens] = useState(2000)
-  const [temperature, setTemperature] = useState(0.5)
-  const [modelType, setModelType] = useState('gpt-3.5-turbo')
   // State variables for meal plan
   const [showMealPlan, setShowMealPlan] = useState(false)
   const [mealPlan, setMealPlan] = useState('')
@@ -38,7 +34,7 @@ const Starter = () => {
   // Meal Plan Object
   const [mealPlanObj, setMealPlanObj] = useState(null)
   // Mode
-  const [mode, setMode] = useState('Default')
+  const [mode, setMode] = useState('Fast')
 
   const handleGenerateMealPlan = async () => {
     setShowSpinner(true)
@@ -47,7 +43,6 @@ const Starter = () => {
     const mealPlanStr = await mealPlanObj.generatePlan(
       allergies,
       preferences,
-      modelType,
       mode,
       api,
       numberOfDays,
@@ -76,7 +71,6 @@ const Starter = () => {
     const editedMealPlanStr = await mealPlanObj.editPlan(
       mealPlan,
       edit,
-      modelType,
       mode,
       api,
       numberOfDays,
@@ -282,9 +276,9 @@ const Starter = () => {
                     className="form-select"
                     aria-label="Default select example"
                   >
-                    <option value="Default">Default</option>
-                    <option value="Recipe">Mode 1</option>
-                    <option value="Test">Mode 2</option>
+                    <option value="Fast">Fast</option>
+                    <option value="Detailed">Detailed</option>
+                    <option value="Test">Test</option>
                     {/* Add more options as needed */}
                   </select>
                 </div>
