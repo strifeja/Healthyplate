@@ -3,9 +3,8 @@
     "",
     "\\src",
     "\\src\\views",
-    "\\src\\views\\nutrition",
-    "\\src\\views\\starter"
+    "\\src\\views\\settings"
   ],
-  "SelectedNode": "\\src\\views\\base",
+  "SelectedNode": "\\src\\views\\settings\\settings.js",
   "PreviewInSolutionExplorer": false
 }
