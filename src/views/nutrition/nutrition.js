@@ -46,7 +46,14 @@ import Calorie from './calorie.js'
 const Nutrition = () => {
   const [activeKey, setActiveKey] = useState(1)
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: 'white',
+        borderRadius: '10px',
+        padding: '20px',
+        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+      }}
+    >
       <h2>Nutrition</h2>
       <CNav variant="tabs" role="tablist">
         <CNavItem>
