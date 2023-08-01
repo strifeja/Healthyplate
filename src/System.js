@@ -171,7 +171,8 @@ export class GroceryList {
       content: `As an AI assistant specializing in meal planning, your task is to generate a grocery list from a given meal plan. 
       The meal plan will provide a list of meals, each with its own set of ingredients and their respective quantities. 
       In some instances, an ingredient might appear in multiple meals. In such cases, you need to consolidate these ingredients and compute the total quantity required.
-      The final output should be a grocery list with no addtional text before or after it. Each line should represent an item.
+      The final output should be a clean, clear grocery list, without any additional text preceeding or succeeding it. 
+      Each line should represent a grocery item.
       Each item on this list should have an associated ID number, the name of the item, the total quantity required along with its measurement unit, and the section of the grocery store where it can be found.
       Please follow this specific format for each line of the grocery list: 'ID#|Item|Amount Measurement|Section'.
       It is important that you generate the grocery list without any additional text before or after it. 
