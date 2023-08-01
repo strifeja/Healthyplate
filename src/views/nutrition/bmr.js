@@ -11,8 +11,8 @@ function BmrValue(props) {
 }
 
 const BMRTracker = () => {
-  const [inlineMaleCheckbox, setMale] = useState(0)
-  const [inlineFemaleCheckbox, setFemale] = useState(0)
+  const [inlineMaleCheckbox, setMale] = useState(false)
+  const [inlineFemaleCheckbox, setFemale] = useState(false)
   const [inputFeet, setFeet] = useState(0)
   const [inputInches, setInches] = useState(0)
   const [inputWeight, setWeight] = useState(0)
@@ -20,23 +20,18 @@ const BMRTracker = () => {
   const [bmrValue, setBmrValue] = useState(0)
 
   const handleCalculateBMR = () => {
-    const calculatedBMR = calculateBMR()
+    const calculatedBMR = Math.round(calculateBMR())
     setBmrValue(calculatedBMR)
-    console.log('male: %d', inlineMaleCheckbox)
-    console.log('feet: %d', inputFeet)
-    console.log('inches: %d', inputInches)
-    console.log('weight: %d', inputWeight)
-    console.log('age: %d', inputAge)
-    console.log(bmrValue)
   }
 
   const calculateBMR = () => {
-    let weight_kg = inputWeight / 2.205
-    let height_cm = (inputFeet * 12 + inputInches) * 2.54
-    if (inlineMaleCheckbox == 1) {
-      return 13.397 * weight_kg + 4.799 * height_cm - 5.677 * inputAge + 88.362
-    } else if (inlineFemaleCheckbox == 1) {
-      return 9.247 * weight_kg + 3.098 * height_cm - 4.33 * inputAge + 447.593
+    let weight_kg = parseFloat(inputWeight) / 2.205
+    let height_cm = (parseFloat(inputFeet) * 12 + parseFloat(inputInches)) * 2.54
+    let age = parseFloat(inputAge)
+    if (inlineMaleCheckbox) {
+      return 13.397 * weight_kg + 4.799 * height_cm - 5.677 * age + 88.362
+    } else if (inlineFemaleCheckbox) {
+      return 9.247 * weight_kg + 3.098 * height_cm - 4.33 * age + 447.593
     }
     return 0
   }
@@ -163,7 +158,7 @@ const BMRTracker = () => {
               <h4>BMR</h4>
             </CCol>
             <CCol>
-              <BmrValue value={bmrValue} />
+              <h2>{bmrValue}</h2>
             </CCol>
             <CCol>
               <h4>calories</h4>
