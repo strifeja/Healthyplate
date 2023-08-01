@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   CButton,
   CButtonGroup,
@@ -14,7 +14,8 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import axios from 'axios'
-import { MealPlan, sendPostInfo } from '../../System.js'
+import { MealPlan, GroceryList } from '../../System.js'
+import { useNavigate } from 'react-router-dom'
 
 const Starter = () => {
   // State variables for allergies and preferences
@@ -22,9 +23,11 @@ const Starter = () => {
   const [preferences, setPreferences] = useState('')
   const [edit, setEdit] = useState('')
   // State variables for meal plan
-  const [showMealPlan, setShowMealPlan] = useState(false)
-  const [mealPlan, setMealPlan] = useState('')
-  const [api, setApi] = useState('')
+  const [showMealPlan, setShowMealPlan] = useState(
+    JSON.parse(localStorage.getItem('showMealPlan')) || false,
+  )
+  const [mealPlan, setMealPlan] = useState(JSON.parse(localStorage.getItem('mealPlan')) || '')
+  const [api, setApi] = useState(localStorage.getItem('apiKey') || '')
   //Loading spinners for buttons
   const [showSpinner, setShowSpinner] = useState(false)
   const [showEditSpinner, setShowEditSpinner] = useState(false)
@@ -35,6 +38,24 @@ const Starter = () => {
   const [mealPlanObj, setMealPlanObj] = useState(null)
   // Mode
   const [mode, setMode] = useState('Fast')
+  // Variable for the grocery list
+  const [groceryList, setGroceryList] = useState('')
+  // Spinner for the grocery list button
+  const [showGrocerySpinner, setShowGrocerySpinner] = useState(false)
+  // Page Navigation
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    localStorage.setItem('showMealPlan', JSON.stringify(showMealPlan))
+  }, [showMealPlan])
+
+  useEffect(() => {
+    localStorage.setItem('mealPlan', JSON.stringify(mealPlan))
+  }, [mealPlan])
+
+  useEffect(() => {
+    localStorage.setItem('apiKey', api)
+  }, [api])
 
   const handleGenerateMealPlan = async () => {
     setShowSpinner(true)
@@ -89,6 +110,16 @@ const Starter = () => {
 
     mealPlanObj.updateLog(logEntry) // Update the log
     console.log(mealPlanObj.log) //Output log to console
+  }
+
+  const handleGenerateGroceryList = async () => {
+    setShowGrocerySpinner(true)
+    const groceryListObj = new GroceryList()
+    const groceryListStr = await groceryListObj.generateList(mealPlan, api)
+    setGroceryList(groceryListStr) // save the grocery list in the state
+    setShowGrocerySpinner(false)
+    localStorage.setItem('groceryList', groceryListStr)
+    navigate('/groceries')
   }
 
   const handleStartAgain = () => {
@@ -185,10 +216,10 @@ const Starter = () => {
                         <CSpinner size="sm" color="light" />
                       </>
                     ) : (
-                      'Edit'
+                      'Edit Meal Plan'
                     )
                   }
-                  disabled={showEditSpinner}
+                  disabled={showEditSpinner || showGrocerySpinner}
                 />
                 <CFormCheck
                   button={{ color: 'dark', variant: 'outline' }}
@@ -196,15 +227,24 @@ const Starter = () => {
                   id="btncheck2"
                   autoComplete="off"
                   label="Start Over"
-                  disabled={showEditSpinner}
+                  disabled={showEditSpinner || showGrocerySpinner}
                 />
                 <CFormCheck
                   button={{ color: 'dark' }}
-                  onClick={handleEditMealPlan}
+                  onClick={handleGenerateGroceryList}
                   id="btncheck3"
                   autoComplete="off"
-                  label="Save Plan"
-                  disabled={showEditSpinner}
+                  label={
+                    showGrocerySpinner ? (
+                      <>
+                        <span style={{ marginRight: '5px' }}>Exporting...</span>
+                        <CSpinner size="sm" color="light" />
+                      </>
+                    ) : (
+                      'Export Grocery List'
+                    )
+                  }
+                  disabled={showEditSpinner || showGrocerySpinner}
                 />
               </CButtonGroup>
             </div>
