@@ -13,6 +13,8 @@ import {
   CFormInput,
 } from '@coreui/react'
 import { GroceryList } from '../../System.js' // Import the GroceryList class
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 const Groceries = () => {
   const [groceryList, setGroceryList] = useState([])
@@ -40,6 +42,17 @@ const Groceries = () => {
     setNewItem('')
     setNewAmount('')
     setNewSection('')
+  }
+
+  const removeItem = (id) => {
+    const newList = groceryList
+      .filter((item) => item.ID !== id)
+      .map((item, index) => {
+        item.ID = index + 1
+        return item
+      })
+    setGroceryList(newList)
+    localStorage.setItem('groceryList', newList.join('\n')) // Update localStorage with new list
   }
 
   useEffect(() => {
@@ -87,6 +100,9 @@ const Groceries = () => {
               <td>{item['Item']}</td>
               <td>{item['AmountMeasurement']}</td>
               <td>{item['Section']}</td>
+              <td>
+                <FontAwesomeIcon icon={faTrash} onClick={() => removeItem(item.ID)} />
+              </td>
             </tr>
           ))}
         </tbody>

@@ -175,7 +175,8 @@ export class GroceryList {
       Each line should represent a grocery item.
       Each item on this list should have an associated ID number, the name of the item, the total quantity required along with its measurement unit, and the section of the grocery store where it can be found.
       Please follow this specific format for each line of the grocery list: 'ID#|Item|Amount Measurement|Section'.
-      It is important that you generate the grocery list without any additional text before or after it. 
+      It is important that you generate the grocery list WITHOUT any additional text before or after it such as "Here is the grocery list"
+      If there is any text or space before the grocery list the sytem will break.
       For example, a line in your output could look like this: '1|Beef|2 lbs|Meat'`,
     }
     const userPrompt = {
